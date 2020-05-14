@@ -1,0 +1,13 @@
+version: "3.2"
+services:
+  trebek:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4567:4567
+    # volumes:
+    #   - questions:/app/questions
+    tty: true
+    stdin_open: true
+    command: ruby /app/trebek.rb -o 0.0.0.0
