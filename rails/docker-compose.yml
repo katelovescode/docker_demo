@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    # note: image, rather than build
+    image: postgres
+    # save our db data from the /var/lib/postgresql/data directory in the container
+    # to the ./tmp/db folder (gitignored) in our project root
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  web:
+    # note: build rather than image
+    build: .
+    # this overwrites the CMD in the Dockerfile
+    # why have it both places?  to allow for `docker run` AND `docker-compose up`
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    # mounts the local root into the container during run time
+    volumes:
+      - .:/myapp
+    # expose the ports
+    ports:
+      - "3000:3000"
+    # this is a gotcha - depends on doesn't mean it waits for it
+    depends_on:
+      - db
